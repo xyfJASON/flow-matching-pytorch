@@ -1,0 +1,53 @@
+seed: 8888
+
+data:
+  name: cifar-10
+  root: ~/data/CIFAR-10
+  img_size: 32
+
+dataloader:
+  num_workers: 16
+  pin_memory: true
+  prefetch_factor: 2
+
+model:
+  target: models.UNetModel
+  params:
+    in_channels: 3
+    model_channels: 256
+    out_channels: 3
+    num_res_blocks: 2
+    attention_resolutions: [16]
+    dropout: 0.0
+    channel_mult: [1, 2, 2, 2]
+    num_heads: 4
+
+
+train:
+  n_steps: 200000
+  batch_size: 256
+
+  ema:
+    decay: 0.9999
+    ema_warmup_type: crowsonkb
+    inv_gamma: 1.0
+    power: 0.75
+
+  print_freq: 100
+  save_freq: 10000
+  sample_freq: 2000
+  n_samples: 64
+
+  optim:
+    target: torch.optim.AdamW
+    params:
+      lr: 0.0005
+      betas: [0.9, 0.999]
+      weight_decay: 0.0
+
+  sched:
+    target: utils.scheduler.PolynomialWarmupLR
+    params:
+      warmup_steps: 20000
+      training_steps: 200000
+      lr_end: 1e-8
