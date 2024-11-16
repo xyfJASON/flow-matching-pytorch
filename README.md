@@ -1,6 +1,12 @@
 # flow-matching-pytorch
 
-## 🛠️ Installation
+Implement Flow Matching with PyTorch.
+
+<br/>
+
+
+
+## Installation
 
 > The code is tested with python 3.12, torch 2.4.1 and cuda 12.4.
 
@@ -27,70 +33,93 @@ pip install -r requirements.txt
 
 <br/>
 
-## 🔥 Training
+
+
+## Training
 
 ```shell
 accelerate-launch train.py -c CONFIG [-e EXPDIR] [-mp MIXED_PRECISION]
 ```
 
-- `CONFIG`: Path to the configuration file, e.g., `./configs/cifar10.yaml`.
-- `EXPDIR`: Path to the experiment directory. Default: `./runs/<current_time>`.
-- `MIXED_PRECISION`: Use mixed precision training. Options: 'no', 'fp16', 'bf16'.
+- `-c`: Path to the configuration file, e.g., `./configs/cifar10.yaml`.
+- `-e`: Path to the experiment directory. Default: `./runs/<current_time>`.
+- `-mp`: Use mixed precision training. Options: 'no', 'fp16', 'bf16'.
 
 <br/>
 
 
 
-## 🚀 Sampling
+## Sampling
 
 ```shell
 accelerate-launch sample.py -c CONFIG \
                             --weights WEIGHTS \
                             --n_samples N_SAMPLES \
-                            --save_dir SAVEDIR \
+                            --save_dir SAVE_DIR \
                             [--sampling_steps SAMPLING_STEPS] \
+                            [--sampling_method SAMPLING_METHOD] \
                             [--bspp BATCH_SIZE_PER_PROCESS] \
                             [-seed SEED]
 ```
 
-- `CONFIG`: Path to the configuration file, e.g., `./configs/cifar10.yaml`.
-- `WEIGHTS`: Path to the model weights, e.g., `./runs/expdir/ckpt/stepxxxx/model_ema.pt`.
-- `N_SAMPLES`: Number of samples to generate.
-- `SAVEDIR`: Path to the directory to save the samples.
-- `SAMPLING_STEPS`: Number of steps to sample. Default: 100.
-- `BATCH_SIZE_PER_PROCESS`: Batch size per process. Default: 100.
-- `SEED`: Random seed. Default: 8888.
+- `-c`: Path to the configuration file, e.g., `./configs/cifar10.yaml`.
+- `--weights`: Path to the model weights, e.g., `./runs/expdir/ckpt/stepxxxx/model_ema.pt`.
+- `--n_samples`: Number of samples to generate.
+- `--save_dir`: Path to the directory to save the samples.
+- `--sampling_steps`: Number of steps to sample. Default: 100.
+- `--sampling_method`: Sampling method. Default: 'euler'.
+- `--bspp`: Batch size per process. Default: 100.
+- `--seed`: Random seed. Default: 8888.
 
 <br/>
 
 
 
-## 🎨 Results (CIFAR-10)
+## Results (CIFAR-10)
 
 **Note**: The model is trained for only 200k steps (iterations).
 
 **Quantitative results**:
 
-| EMA Model |     Sampler      |   FID ↓   |
-|:---------:|:----------------:|:---------:|
-|    Yes    | Euler 1000 steps |   7.47    |
-|    Yes    | Euler 100 steps  |   7.73    |
-|    Yes    |  Euler 10 steps  |   19.37   |
-|    No     | Euler 1000 steps |   8.38    |
-|    No     | Euler 100 steps  |   8.62    |
-|    No     |  Euler 10 steps  |   20.14   |
+| EMA Model |     Sampler      | NFE  | FID ↓ |
+|:---------:|:----------------:|:----:|:-----:|
+|    Yes    | Euler 1000 steps | 1000 | 7.74  |
+|    Yes    | Euler 100 steps  | 100  | 7.98  |
+|    Yes    |  Euler 10 steps  |  10  | 19.72 |
+|    Yes    |  Heun 500 steps  | 1000 | 7.76  |
+|    Yes    |  Heun 50 steps   | 100  | 9.15  |
+|    Yes    |   Heun 5 steps   |  10  | 116.7 |
 
 **Visual results**:
 
-|             Euler 10 steps              |             Euler 100 steps              |             Euler 1000 steps              |
-|:---------------------------------------:|:----------------------------------------:|:-----------------------------------------:|
-|  ![](./assets/cifar10-ema-10steps.png)  |  ![](./assets/cifar10-ema-100steps.png)  |  ![](./assets/cifar10-ema-1000steps.png)  |
+<table style="text-align: center">
+<tr>
+    <th>Euler 1000 steps</th>
+    <th>Euler 100 steps</th>
+    <th>Euler 10 steps</th>
+</tr>
+<tr>
+    <td><img src="./assets/cifar10-ema-euler1000steps.png" alt="" /></td>
+    <td><img src="./assets/cifar10-ema-euler100steps.png" alt="" /></td>
+    <td><img src="./assets/cifar10-ema-euler10steps.png" alt="" /></td>
+</tr>
+<tr>
+    <th>Heun 500 steps</th>
+    <th>Heun 50 steps</th>
+    <th>Heun 5 steps</th>
+</tr>
+<tr>
+    <td><img src="./assets/cifar10-ema-heun500steps.png" alt="" /></td>
+    <td><img src="./assets/cifar10-ema-heun50steps.png" alt="" /></td>
+    <td><img src="./assets/cifar10-ema-heun5steps.png" alt="" /></td>
+</tr>
+</table>
 
 <br/>
 
 
 
-## 🖋️ References
+## References
 
 Flow Matching:
 

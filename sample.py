@@ -18,6 +18,7 @@ def get_parser():
     parser.add_argument('--n_samples', type=int, required=True, help='Number of samples')
     parser.add_argument('--save_dir', type=str, required=True, help='Path to directory saving samples')
     parser.add_argument('--sampling_steps', type=int, default=100, help='Number of sampling steps')
+    parser.add_argument('--sampling_method', type=str, default='euler', help='Sampling method')
     parser.add_argument('--bspp', type=int, default=100, help='Batch size on each process')
     parser.add_argument('--seed', type=int, default=8888, help='Set random seed')
     return parser
@@ -57,7 +58,7 @@ def main():
     logger.info('=' * 50)
 
     # BUILD FLOW MATCHING SAMPLER
-    sampler = FlowMatchingSampler()
+    sampler = FlowMatchingSampler(method=args.sampling_method)
     accelerator.wait_for_everyone()
 
     # SAMPLING FUNCTIONS

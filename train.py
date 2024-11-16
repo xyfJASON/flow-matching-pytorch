@@ -163,7 +163,7 @@ def main():
             noise = torch.randn_like(x)
             x_inter = (1 - timesteps.reshape(-1, 1, 1, 1)) * x + timesteps.reshape(-1, 1, 1, 1) * noise
             # model forward
-            model_output = model(x_inter, timesteps)
+            model_output = model(x_inter, timesteps * 999)
             # mse loss (predict the velocity)
             loss = F.mse_loss(model_output, noise - x)
 
